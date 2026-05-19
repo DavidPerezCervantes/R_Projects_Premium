@@ -28,7 +28,7 @@ jobs:
           install.packages(c("shiny", "shinylive", "shinythemes", "plotly", "ggplot2", "MASS", "bslib", "dplyr"))
         shell: Rscript {0}
         
-      - name: Build All Shinylive Apps & Create Menu
+      - name: Build All Shinylive Apps & Deploy Premium Menu
         run: |
           library(shinylive)
           
@@ -39,48 +39,17 @@ jobs:
           carpetas <- list.dirs(full.names = FALSE, recursive = FALSE)
           carpetas <- carpetas[!carpetas %in% c(".git", ".github", "_site")]
           
-          apps_validas <- c()
-          
           # 3. Compilar cada app dentro de su propia subcarpeta
           for (carpeta in carpetas) {
             if (file.exists(file.path(carpeta, "app.R"))) {
               message("Compilando aplicacion: ", carpeta)
               shinylive::export(appdir = carpeta, destdir = file.path("_site", carpeta))
-              apps_validas <- c(apps_validas, carpeta)
             }
           }
           
-          # 4. Generar una pagina de inicio (index.html) automatica con diseño limpio
-          html_lines <- c(
-            "<!DOCTYPE html>",
-            "<html>",
-            "<head>",
-            "  <title>Portafolio de Proyectos Estadisticos</title>",
-            "  <style>",
-            "    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 800px; margin: 50px auto; padding: 0 20px; background-color: #f8f9fa; color: #333; }",
-            "    h1 { color: #2c3e50; border-bottom: 3px solid #34495e; padding-bottom: 12px; font-size: 2.2em; }",
-            "    p { color: #666; font-size: 1.1em; }",
-            "    ul { list-style: none; padding: 0; margin-top: 30px; }",
-            "    li { background: white; margin: 15px 0; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.2s, box-shadow 0.2s; border-left: 5px solid #3498db; }",
-            "    li:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); }",
-            "    a { text-decoration: none; color: #2980b9; font-weight: bold; font-size: 1.2em; display: block; }",
-            "  </style>",
-            "</head>",
-            "<body>",
-            "  <h1>📊 Portafolio de Proyectos e Inferencia Estadistica</h1>",
-            "  <p>Monitoreo, simulaciones y modelos interactivos desarrollados en R. Selecciona un proyecto para ejecutar la aplicacion directamente en tu navegador:</p>",
-            "  <ul>"
-          )
-          
-          for (app in apps_validas) {
-            # Convierte los guiones bajos o nombres de carpetas en titulos legibles
-            titulo_limpio <- gsub("_", " ", app)
-            html_lines <- c(html_lines, paste0("    <li><a href='./", app, "/'>🚀 ", titulo_limpio, "</a></li>"))
-          }
-          
-          html_lines <- c(html_lines, "  </ul>", "</body>", "</html>")
-          
-          writeLines(html_lines, "_site/index.html")
+          # 4. Copiar los archivos estáticos de diseño premium al directorio final _site
+          file.copy("index.html", "_site/index.html", overwrite = TRUE)
+          file.copy("style.css", "_site/style.css", overwrite = TRUE)
         shell: Rscript {0}
         
       - name: Upload artifact
