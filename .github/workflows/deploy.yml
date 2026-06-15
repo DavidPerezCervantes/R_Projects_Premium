@@ -25,7 +25,7 @@ jobs:
       
       - name: Install packages
         run: |
-          install.packages(c("shiny", "shinylive", "shinythemes", "plotly", "ggplot2", "MASS", "bslib", "dplyr", "shinydashboard", "shinyWidgets", "quantmod", "tidyverse", "xts", "zoo", "vars", "urca", "tseries", "forecast", "lmtest", "corrplot", "PerformanceAnalytics", "TTR", "DT", "scales", "e1071"))
+          install.packages(c("shiny", "shinylive", "shinythemes", "plotly", "ggplot2", "MASS", "bslib", "dplyr"))
         shell: Rscript {0}
         
       - name: Build All Shinylive Apps & Deploy Premium Menu
